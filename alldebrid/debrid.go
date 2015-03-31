@@ -31,9 +31,6 @@ func sendRequest(url string, form interface{}, http_code int, jar bool) (string,
 
 	easy.Setopt(curl.OPT_URL, url)
 	easy.Setopt(curl.OPT_COOKIEFILE, cookie)
-	if jar {
-		easy.Setopt(curl.OPT_COOKIEJAR, cookie)
-	}
 	easy.Setopt(curl.OPT_VERBOSE, false)
 	if form != nil {
 		easy.Setopt(curl.OPT_HTTPPOST, form)
@@ -49,6 +46,9 @@ func sendRequest(url string, form interface{}, http_code int, jar bool) (string,
 		return "", err
 	} else if code != http_code {
 		return data, fmt.Errorf("Unexpected code: %v, invalid login/password?\n", code)
+	} else if jar {
+		easy.Setopt(curl.OPT_COOKIEJAR, cookie)
+		return data, nil
 	} else {
 		return data, nil
 	}
