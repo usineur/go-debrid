@@ -46,7 +46,7 @@ func sendRequest(url string, form interface{}, http_code int, jar bool) (string,
 	if err := easy.Perform(); err != nil {
 		return "", err
 	} else if code, err := easy.Getinfo(curl.INFO_HTTP_CODE); err != nil {
-		return data, err
+		return "", err
 	} else if code != http_code {
 		return data, fmt.Errorf("Unexpected code: %v, invalid login/password?\n", code)
 	} else {
@@ -150,7 +150,7 @@ func RemoveTorrent(id string) error {
 
 	if _, err := getUid(); err != nil {
 		return err
-	} else if data, err := sendRequest(url, nil, 302, false); err != nil && data == "" {
+	} else if data, err := sendRequest(url, nil, 302, false); err != nil && data != "" {
 		return fmt.Errorf("ID %v not found in torrent queue", id)
 	} else if err != nil {
 		return err
