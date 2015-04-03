@@ -140,8 +140,11 @@ func AddTorrent(filename string, magnet string) error {
 
 		if _, err := sendRequest(url, form, 302, false); err != nil {
 			return err
-		} else {
+		} else if filename != "" {
 			fmt.Printf("%v correctly added to torrent queue\n", filename)
+			return nil
+		} else {
+			fmt.Println("magnet correctly added to torrent queue")
 			return nil
 		}
 	}
