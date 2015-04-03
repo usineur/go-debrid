@@ -8,13 +8,15 @@ import (
 
 func main() {
 	fct := func() error {
-		return errors.New("Usage: alldebrid [-d link | -t torrent | -r torrent_id | -l]")
+		return errors.New("Usage: alldebrid [-d link | -t torrent | -m magnet | -r torrent_id | -l]")
 	}
 
 	if args := len(os.Args); args == 2 && os.Args[1] == "-l" {
 		fct = func() error { return alldebrid.GetTorrentList() }
 	} else if args == 3 && os.Args[1] == "-t" {
-		fct = func() error { return alldebrid.AddTorrent(os.Args[2]) }
+		fct = func() error { return alldebrid.AddTorrent(os.Args[2], "") }
+	} else if args == 3 && os.Args[1] == "-m" {
+		fct = func() error { return alldebrid.AddTorrent("", os.Args[2]) }
 	} else if args == 3 && os.Args[1] == "-r" {
 		fct = func() error { return alldebrid.RemoveTorrent(os.Args[2]) }
 	} else if args == 3 && os.Args[1] == "-d" {

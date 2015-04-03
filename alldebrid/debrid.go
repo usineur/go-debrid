@@ -123,7 +123,7 @@ func GetTorrentList() error {
 	}
 }
 
-func AddTorrent(filename string) error {
+func AddTorrent(filename string, magnet string) error {
 	url := "https://upload.alldebrid.com/uploadtorrent.php"
 
 	if uid, err := getUid(); err != nil {
@@ -131,9 +131,11 @@ func AddTorrent(filename string) error {
 	} else {
 		form := curl.NewForm()
 		form.Add("uid", uid)
-		form.Add("domain", "http://www.alldebrid.com/torrent/")
-		form.Add("magnet", "")
-		form.AddFile("uploadedfile", filename)
+		form.Add("domain", "https://www.alldebrid.com/torrent/")
+		form.Add("magnet", magnet)
+		if filename != "" {
+			form.AddFile("uploadedfile", filename)
+		}
 		form.Add("submit", "Convert this torrent")
 
 		if _, err := sendRequest(url, form, 302, false); err != nil {
@@ -146,7 +148,7 @@ func AddTorrent(filename string) error {
 }
 
 func RemoveTorrent(id string) error {
-	url := "http://www.alldebrid.com/torrent/?action=remove&id=" + id
+	url := "https://www.alldebrid.com/torrent/?action=remove&id=" + id
 
 	if _, err := getUid(); err != nil {
 		return err
