@@ -33,7 +33,7 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 	doc := ""
 	url := ""
 
-	if url = host + path + goch.PrepareFields(data); form != nil {
+	if url = host + path + "?" + goch.PrepareFields(data); form != nil {
 		url = strings.Replace(url, "www", "upload", -1)
 		easy.Setopt(curl.OPT_HTTPPOST, form)
 	}
