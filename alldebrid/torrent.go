@@ -123,23 +123,12 @@ func AddTorrent(filename string, magnet string) error {
 			case "":
 				return fmt.Errorf("Alldebrid internal problem: retry")
 
-			case "1":
-				return fmt.Errorf("Problem in magnet link")
-
-			case "2":
-				return fmt.Errorf("This doesn't seem to be a magnet link.")
-
-			case "3":
-				return fmt.Errorf("You have to be premium.")
-
-			case "4":
-				return fmt.Errorf("Download already finished.")
-
-			case "5":
-				return fmt.Errorf("The torrent that you try to download is too big, can't be bigger than 60 Go.")
-
 			default:
-				return fmt.Errorf("Unsupported torrent error %v", matches[1])
+				if msg, err := goch.GetContent(res, "//div[@style=\"color:red;text-align:center;\"]"); err != nil {
+					return err
+				} else {
+					return fmt.Errorf(msg)
+				}
 			}
 		} else if filename != "" {
 			fmt.Printf("%v correctly added to torrent queue\n", filename)
