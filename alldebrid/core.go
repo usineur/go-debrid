@@ -26,7 +26,9 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 
 	easy.Setopt(curl.OPT_URL, url)
 	easy.Setopt(curl.OPT_COOKIEFILE, cookie)
-	easy.Setopt(curl.OPT_COOKIEJAR, cookie)
+	if path == "/register/" {
+		easy.Setopt(curl.OPT_COOKIEJAR, cookie)
+	}
 	easy.Setopt(curl.OPT_VERBOSE, false)
 	easy.Setopt(curl.OPT_FOLLOWLOCATION, true)
 	easy.Setopt(curl.OPT_WRITEFUNCTION, func(content []byte, _ interface{}) bool {
@@ -44,8 +46,6 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 }
 
 func getCookie() error {
-	os.Remove(cookie)
-
 	id, pass := getCredentials()
 	fields := map[string]string{
 		"action":         "login",
@@ -56,6 +56,8 @@ func getCookie() error {
 	if res, eff, err := sendRequest("/register/", fields, nil); err != nil {
 		return err
 	} else if eff != host+"/" {
+		os.Remove(cookie)
+
 		if form, err := goch.GetFormValues(res, "//form[@name=\"connectform\"]"); err != nil {
 			return err
 		} else if captcha, exist := form["recaptcha_response_field"]; exist && captcha == "manual_challenge" {
