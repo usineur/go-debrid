@@ -9,7 +9,7 @@ How to use
 ```
         --debrid, -d    <link>
 ```
-* Add a torrent/magnet, can be used with extra paramaters "```--split```" to file files in parts of 1 Gb, and/or "```--disable-quick```" to disable quick search of existing torrents in system
+* Add a torrent/magnet, can be used with extra parameters "```--split```" to split files into parts of 1 Gb, and/or "```--disable-quick```" to disable quick search of existing torrents in system
 ```
         --torrent, -t   <torrent file> [--split, -s|--disable-quick, -q]
         --magnet,  -m   <magnet link>  [--split, -s|--disable-quick, -q]
