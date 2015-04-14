@@ -37,3 +37,11 @@ func getFullName(filename string) string {
 
 	return path + fp + filename
 }
+
+func btos(value bool) string {
+	if value {
+		return "1"
+	} else {
+		return "0"
+	}
+}

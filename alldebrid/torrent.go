@@ -97,7 +97,7 @@ func Torrent(params ...string) error {
 	}
 }
 
-func AddTorrent(filename string, magnet string) error {
+func AddTorrent(filename string, magnet string, split bool, quick bool) error {
 	if uid, err := getUid(); err != nil {
 		return err
 	} else {
@@ -110,6 +110,8 @@ func AddTorrent(filename string, magnet string) error {
 		if filename != "" {
 			form.AddFile("uploadedfile", filename)
 		}
+		form.Add("splitfile", btos(split))
+		form.Add("quick", btos(quick))
 		form.Add("submit", "Convert this torrent")
 
 		if res, eff, err := sendRequest("/uploadtorrent.php", nil, form); err != nil {
