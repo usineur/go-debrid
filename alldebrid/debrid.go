@@ -13,7 +13,7 @@ type service struct {
 	Host      interface{} // could be a string or a boolean
 	Filename  string
 	Icon      string
-	Streaming []string
+	Streaming interface{} // could be []string or map[string]string
 	Nb        int
 	Error     string
 	Filesize  string
