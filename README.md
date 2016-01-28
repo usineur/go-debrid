@@ -21,7 +21,6 @@ export GOPATH=/tmp/go
 go get github.com/usineur/go-debrid
 ```
   /tmp/go/bin/ will then contain the program binary.
-```
 
 How to use
 ----------
