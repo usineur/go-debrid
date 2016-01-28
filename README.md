@@ -3,6 +3,26 @@ go-debrid
 
 Tool written in Go to interact with Alldebrid API
 
+Compilation
+-----------
+
+* Install the Go compiler suite; e.g. on Fedora:
+```
+sudo dnf install golang
+```
+* Install libxml2 and libcurl header files
+```
+sudo dnf install libxml2-devel libcurl-devel
+```
+* Then run
+```
+mkdir /tmp/go
+export GOPATH=/tmp/go
+go get github.com/usineur/go-debrid
+```
+  /tmp/go/bin/ will then contain the program binary.
+```
+
 How to use
 ----------
 * Debrid a link supported by Alldebrid
