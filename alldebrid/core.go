@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/andelf/go-curl"
 	"github.com/usineur/goch"
+	"net/url"
 	"os"
 	"strings"
 )
@@ -17,14 +18,27 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 	defer easy.Cleanup()
 
 	doc := ""
-	url := ""
+	link := ""
 
-	if url = host + path + "?" + goch.PrepareFields(data); form != nil {
-		url = strings.Replace(url, "www", "upload", -1)
+	if urlBuilder, err := url.Parse(host); err != nil {
+		return "", "", err
+	} else {
+		urlBuilder.Path += path
+		parameters := url.Values{}
+		for k, v := range data {
+			parameters.Add(k, v)
+		}
+		urlBuilder.RawQuery = parameters.Encode()
+
+		link = urlBuilder.String()
+	}
+
+	if form != nil {
+		link = strings.Replace(link, "www", "upload", -1)
 		easy.Setopt(curl.OPT_HTTPPOST, form)
 	}
 
-	easy.Setopt(curl.OPT_URL, url)
+	easy.Setopt(curl.OPT_URL, link)
 	easy.Setopt(curl.OPT_COOKIEFILE, cookie)
 	if path == "/register/" {
 		easy.Setopt(curl.OPT_COOKIEJAR, cookie)
