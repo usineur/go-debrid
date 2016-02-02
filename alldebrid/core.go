@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/andelf/go-curl"
 	"github.com/usineur/goch"
-	"net/url"
 	"os"
 	"strings"
 )
@@ -17,45 +16,35 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 	easy := curl.EasyInit()
 	defer easy.Cleanup()
 
-	doc := ""
-	link := ""
-
-	if urlBuilder, err := url.Parse(host); err != nil {
+	if url, err := goch.EncodeUrl(host, path, data); err != nil {
 		return "", "", err
 	} else {
-		urlBuilder.Path += path
-		parameters := url.Values{}
-		for k, v := range data {
-			parameters.Add(k, v)
+		doc := ""
+
+		if form != nil {
+			url = strings.Replace(url, "www", "upload", -1)
+			easy.Setopt(curl.OPT_HTTPPOST, form)
 		}
-		urlBuilder.RawQuery = parameters.Encode()
 
-		link = urlBuilder.String()
-	}
+		easy.Setopt(curl.OPT_URL, url)
+		easy.Setopt(curl.OPT_COOKIEFILE, cookie)
+		if path == "/register/" {
+			easy.Setopt(curl.OPT_COOKIEJAR, cookie)
+		}
+		easy.Setopt(curl.OPT_VERBOSE, false)
+		easy.Setopt(curl.OPT_FOLLOWLOCATION, true)
+		easy.Setopt(curl.OPT_WRITEFUNCTION, func(content []byte, _ interface{}) bool {
+			doc += string(content)
+			return true
+		})
 
-	if form != nil {
-		link = strings.Replace(link, "www", "upload", -1)
-		easy.Setopt(curl.OPT_HTTPPOST, form)
-	}
-
-	easy.Setopt(curl.OPT_URL, link)
-	easy.Setopt(curl.OPT_COOKIEFILE, cookie)
-	if path == "/register/" {
-		easy.Setopt(curl.OPT_COOKIEJAR, cookie)
-	}
-	easy.Setopt(curl.OPT_VERBOSE, false)
-	easy.Setopt(curl.OPT_FOLLOWLOCATION, true)
-	easy.Setopt(curl.OPT_WRITEFUNCTION, func(content []byte, _ interface{}) bool {
-		doc += string(content)
-		return true
-	})
-
-	if err := easy.Perform(); err != nil {
-		return "", "", err
-	} else if eff, err := easy.Getinfo(curl.INFO_EFFECTIVE_URL); err != nil {
-		return "", "", err
-	} else {
-		return doc, eff.(string), nil
+		if err := easy.Perform(); err != nil {
+			return "", "", err
+		} else if eff, err := easy.Getinfo(curl.INFO_EFFECTIVE_URL); err != nil {
+			return "", "", err
+		} else {
+			return doc, eff.(string), nil
+		}
 	}
 }
 
