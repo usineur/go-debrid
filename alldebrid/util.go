@@ -14,7 +14,7 @@ func getCredentials() (string, string) {
 	id, _, _ := bio.ReadLine()
 
 	print("Password: ")
-	pass := gopass.GetPasswdMasked()
+	pass, _ := gopass.GetPasswdMasked()
 
 	return string(id), string(pass)
 }
