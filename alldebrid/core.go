@@ -1,9 +1,11 @@
 package alldebrid
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/andelf/go-curl"
 	"github.com/usineur/goch"
+	"io"
 	"os"
 	"strings"
 )
@@ -45,6 +47,22 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 		} else {
 			return doc, eff.(string), nil
 		}
+	}
+}
+
+func netcat(dst io.Writer, url string) error {
+	config := &tls.Config{}
+
+	if host, path, err := goch.DecodeUrl(url); err != nil {
+		return err
+	} else if conn, err := tls.Dial("tcp", host+":443", config); err != nil {
+		return err
+	} else {
+		str := fmt.Sprintf("GET %v HTTP/1.0\r\nHost: %v\r\n\r\n", path, host)
+		go io.Copy(conn, strings.NewReader(str))
+		_, err := io.Copy(dst, conn)
+
+		return err
 	}
 }
 

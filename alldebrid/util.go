@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func getCredentials() (string, string) {
@@ -38,10 +39,20 @@ func getFullName(filename string) string {
 	return path + fp + filename
 }
 
-func btos(value bool) string {
-	if value {
-		return "1"
+func getChoice(length int) (int, error) {
+	print("? ")
+	bio := bufio.NewReader(os.Stdin)
+	num, _, _ := bio.ReadLine()
+
+	if res, err := strconv.Atoi(string(num)); err != nil {
+		return -1, err
+	} else if res < 0 || res > length-1 {
+		return -1, nil
 	} else {
-		return "0"
+		return res, nil
 	}
+}
+
+func btos(value bool) string {
+	return strconv.FormatBool(value)
 }

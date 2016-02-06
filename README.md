@@ -52,5 +52,4 @@ How to use
 
 Credits
 =======
-- Alldebrid: http://www.alldebrid.com
-
+- AllDebrid: http://www.alldebrid.com
