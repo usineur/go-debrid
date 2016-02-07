@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/andelf/go-curl"
+	"html"
 	"os"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -42,15 +44,18 @@ func getDownloadLink(link string) (string, string, bool, error) {
 	} else if s.Link != "" {
 		return s.Link, s.Filename, false, nil
 	} else {
-		return getStreamLink(s.Streaming), s.Filename, true, nil
+		link, suffix := getStreamLink(s.Streaming)
+		return link, html.UnescapeString(s.Filename) + suffix, true, nil
 	}
 }
 
-func getStreamLink(streaming interface{}) string {
+func getStreamLink(streaming interface{}) (string, string) {
 	sLinks := streaming.(map[string]interface{})
+
 	var description []string
+	choice := -1
+	suffix := ".mp4"
 	err := fmt.Errorf("")
-	res := -1
 
 	for i := range sLinks {
 		description = append(description, i)
@@ -63,7 +68,8 @@ func getStreamLink(streaming interface{}) string {
 	}
 
 	for err != nil {
-		if res, err = getChoice(len(description)); err != nil || res == -1 {
+		if choice, err = getChoice(len(description)); err != nil || choice == -1 {
+			choice = -1
 			err = fmt.Errorf("Invalid choice")
 			fmt.Println(err)
 		} else {
@@ -71,7 +77,11 @@ func getStreamLink(streaming interface{}) string {
 		}
 	}
 
-	return sLinks[description[res]].(string)
+	if strings.HasPrefix(description[choice], "audio") {
+		suffix = ".mp3"
+	}
+
+	return sLinks[description[choice]].(string), suffix
 }
 
 func DebridLink(link string) error {
