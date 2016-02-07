@@ -14,6 +14,11 @@ const host = "https://www.alldebrid.com"
 
 var cookie string = getFullName("cookie.txt")
 
+type passThru struct {
+	io.Reader
+	total float64
+}
+
 func sendRequest(path string, data map[string]string, form interface{}) (string, string, error) {
 	easy := curl.EasyInit()
 	defer easy.Cleanup()
@@ -50,6 +55,17 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 	}
 }
 
+func (pt *passThru) Read(p []byte) (int, error) {
+	n, err := pt.Reader.Read(p)
+	pt.total += float64(n)
+
+	if err == nil {
+		fmt.Printf("Read %v bytes for a total of %.2fMB \r", n, pt.total/1048576)
+	}
+
+	return n, err
+}
+
 func netcat(dst io.Writer, url string) error {
 	config := &tls.Config{}
 
@@ -60,7 +76,7 @@ func netcat(dst io.Writer, url string) error {
 	} else {
 		str := fmt.Sprintf("GET %v HTTP/1.0\r\nHost: %v\r\n\r\n", path, host)
 		go io.Copy(conn, strings.NewReader(str))
-		_, err := io.Copy(dst, conn)
+		_, err := io.Copy(dst, &passThru{Reader: conn})
 
 		return err
 	}

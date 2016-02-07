@@ -92,7 +92,13 @@ func DebridLink(link string) error {
 		defer fp.Close()
 
 		if stream {
-			return netcat(fp, url)
+			fmt.Printf("Downloading of \"%v\"\n", filename)
+			if err := netcat(fp, url); err != nil {
+				return err
+			} else {
+				fmt.Printf("\nDownload finished\n")
+				return nil
+			}
 		}
 
 		easy := curl.EasyInit()
