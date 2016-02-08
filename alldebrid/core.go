@@ -19,6 +19,11 @@ type passThru struct {
 	total float64
 }
 
+type headless struct {
+	io.Writer
+	isBody bool
+}
+
 func sendRequest(path string, data map[string]string, form interface{}) (string, string, error) {
 	easy := curl.EasyInit()
 	defer easy.Cleanup()
@@ -66,6 +71,21 @@ func (pt *passThru) Read(p []byte) (int, error) {
 	return n, err
 }
 
+func (h *headless) Write(p []byte) (int, error) {
+	var n int
+	var err error
+
+	if !h.isBody {
+		h.isBody = true
+		n = len(p)
+		err = nil
+	} else {
+		n, err = h.Writer.Write(p)
+	}
+
+	return n, err
+}
+
 func netcat(dst io.Writer, url string) error {
 	config := &tls.Config{}
 
@@ -74,9 +94,11 @@ func netcat(dst io.Writer, url string) error {
 	} else if conn, err := tls.Dial("tcp", host+":443", config); err != nil {
 		return err
 	} else {
+		defer conn.Close()
+
 		str := fmt.Sprintf("GET %v HTTP/1.0\r\nHost: %v\r\n\r\n", path, host)
 		go io.Copy(conn, strings.NewReader(str))
-		_, err := io.Copy(dst, &passThru{Reader: conn})
+		_, err := io.Copy(&headless{Writer: dst}, &passThru{Reader: conn})
 
 		return err
 	}
