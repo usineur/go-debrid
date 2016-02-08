@@ -88,7 +88,7 @@ func DebridLink(link string) error {
 	if url, filename, stream, err := getDownloadLink(link); err != nil {
 		return err
 	} else {
-		fp, _ := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+		fp, _ := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
 		defer fp.Close()
 
 		if stream {
