@@ -15,7 +15,7 @@ func getUid() (string, error) {
 		} else {
 			return getUid()
 		}
-	} else if pattern, err := regexp.Compile(".*uid\t(.*)"); err != nil {
+	} else if pattern, err := regexp.Compile(".*\tuid\t(.*)"); err != nil {
 		return "", err
 	} else if matches := pattern.FindStringSubmatch(contents); len(matches) != 2 {
 		return "", fmt.Errorf("Expected cookie \"uid\" not found\n")
@@ -104,6 +104,7 @@ func AddTorrent(filename string, magnet string, split bool, quick bool) error {
 		path := "/torrent/"
 
 		form := curl.NewForm()
+
 		form.Add("uid", uid)
 		form.Add("domain", host+path)
 		form.Add("magnet", magnet)
@@ -117,6 +118,8 @@ func AddTorrent(filename string, magnet string, split bool, quick bool) error {
 		if res, eff, err := sendRequest("/uploadtorrent.php", nil, form); err != nil {
 			return err
 		} else if res == "Bad uploaded files" {
+			return fmt.Errorf(res)
+		} else if res == "Invalid cookie." {
 			return fmt.Errorf(res)
 		} else if pattern, err := regexp.Compile(host + path + "\\?error=(.*)"); err != nil {
 			return err
