@@ -7,6 +7,8 @@ import (
 	"github.com/usineur/goch"
 	"io"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -14,14 +16,10 @@ const host = "https://www.alldebrid.com"
 
 var cookie string = getFullName("cookie.txt")
 
-type passThru struct {
-	io.Reader
-	total float64
-}
-
 type headless struct {
 	io.Writer
-	isBody bool
+	dltotal  float64
+	filesize float64
 }
 
 func sendRequest(path string, data map[string]string, form interface{}) (string, string, error) {
@@ -60,27 +58,31 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 	}
 }
 
-func (pt *passThru) Read(p []byte) (int, error) {
-	n, err := pt.Reader.Read(p)
-	pt.total += float64(n)
-
-	if err == nil {
-		fmt.Printf("Read %v bytes for a total of %.2fMB \r", n, pt.total/1048576)
-	}
-
-	return n, err
-}
-
 func (h *headless) Write(p []byte) (int, error) {
 	var n int
 	var err error
 
-	if !h.isBody {
-		h.isBody = true
+	if h.dltotal == 0 {
 		n = len(p)
 		err = nil
+		h.dltotal += float64(n)
+
+		if pattern, err := regexp.Compile("Content-Length: (.*)\r"); err == nil {
+			if matches := pattern.FindStringSubmatch(string(p)); len(matches) == 2 {
+				h.filesize, _ = strconv.ParseFloat(matches[1], 64)
+			}
+		}
 	} else {
-		n, err = h.Writer.Write(p)
+		if n, err = h.Writer.Write(p); err != nil {
+			return n, err
+		}
+
+		h.dltotal += float64(n)
+		if h.filesize != 0 {
+			fmt.Printf("Downloaded %3.2f%% of %.2fMB \r", h.dltotal/h.filesize*100, h.filesize/1048576)
+		} else {
+			fmt.Printf("Write %v bytes for a total of %.2fMB \r", n, h.dltotal/1048576)
+		}
 	}
 
 	return n, err
@@ -98,7 +100,7 @@ func netcat(dst io.Writer, url string) error {
 
 		str := fmt.Sprintf("GET %v HTTP/1.0\r\nHost: %v\r\n\r\n", path, host)
 		go io.Copy(conn, strings.NewReader(str))
-		_, err := io.Copy(&headless{Writer: dst}, &passThru{Reader: conn})
+		_, err := io.Copy(&headless{Writer: dst}, conn)
 
 		return err
 	}
