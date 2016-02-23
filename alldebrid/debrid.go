@@ -84,11 +84,14 @@ func getStreamLink(streaming interface{}) (string, string) {
 	return sLinks[description[choice]].(string), suffix
 }
 
-func DebridLink(link string) error {
-	if url, filename, stream, err := getDownloadLink(link); err != nil {
+func DebridLink(link string, filename string) error {
+	if url, originalFilename, stream, err := getDownloadLink(link); err != nil {
 		return err
 	} else {
-		filename := strings.Replace(filename, "/", "-", -1)
+		if filename == "" {
+			filename = originalFilename
+		}
+		filename = strings.Replace(filename, "/", "-", -1)
 
 		fp, _ := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
 		defer fp.Close()

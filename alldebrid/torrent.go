@@ -57,7 +57,7 @@ func Torrent(params ...string) error {
 					if link == "Pending" {
 						fmt.Printf("ID %v is not yet downloadable\n", values[i][1])
 					} else if link != "" {
-						if err := DebridLink(link); err != nil {
+						if err := DebridLink(link, ""); err != nil {
 							fmt.Println(err.Error())
 						}
 					}

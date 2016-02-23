@@ -67,7 +67,9 @@ func main() {
 
 		case "-d", "--debrid":
 			if args == 3 {
-				fct = func() error { return alldebrid.DebridLink(os.Args[2]) }
+				fct = func() error { return alldebrid.DebridLink(os.Args[2], "") }
+			} else if args == 5 && (os.Args[3] == "-o" || os.Args[3] == "--output") {
+				fct = func() error { return alldebrid.DebridLink(os.Args[2], os.Args[4]) }
 			}
 			break
 
