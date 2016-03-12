@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-const host = "https://www.alldebrid.com"
+const host = "https://alldebrid.com"
 
 var cookie string = getFullName("cookie.txt")
 
