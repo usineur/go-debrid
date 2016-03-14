@@ -32,7 +32,7 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 		doc := ""
 
 		if form != nil {
-			url = strings.Replace(url, "www", "upload", -1)
+			url = strings.Replace(url, "https://", "upload.", -1)
 			easy.Setopt(curl.OPT_HTTPPOST, form)
 		}
 
