@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 )
 
@@ -29,8 +30,12 @@ func getFileContent(fullname string) (string, error) {
 }
 
 func getFullName(filename string) string {
+	home := "HOME"
+	if isWindows() {
+		home = "USERPROFILE"
+	}
 	fp := string(filepath.Separator)
-	path := os.Getenv("HOME") + fp + ".config" + fp + "alldebrid"
+	path := os.Getenv(home) + fp + ".config" + fp + "alldebrid"
 
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		os.MkdirAll(path, 0700)
@@ -55,4 +60,8 @@ func getChoice(length int) (int, error) {
 
 func btos(value bool) string {
 	return strconv.FormatBool(value)
+}
+
+func isWindows() bool {
+	return runtime.GOOS == "windows"
 }

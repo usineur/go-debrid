@@ -47,6 +47,9 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 			doc += string(content)
 			return true
 		})
+		if isWindows() {
+			easy.Setopt(curl.OPT_SSL_VERIFYPEER, false)
+		}
 
 		if err := easy.Perform(); err != nil {
 			return "", "", err
