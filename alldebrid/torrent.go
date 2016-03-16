@@ -3,6 +3,7 @@ package alldebrid
 import (
 	"fmt"
 	"github.com/andelf/go-curl"
+	"github.com/anisus/eol"
 	"github.com/usineur/goch"
 	"regexp"
 	"strings"
@@ -15,7 +16,7 @@ func getUid() (string, error) {
 		} else {
 			return getUid()
 		}
-	} else if pattern, err := regexp.Compile(".*\tuid\t(.*)"); err != nil {
+	} else if pattern, err := regexp.Compile(".*\tuid\t(.*)" + eol.OS); err != nil {
 		return "", err
 	} else if matches := pattern.FindStringSubmatch(contents); len(matches) != 2 {
 		return "", fmt.Errorf("Expected cookie \"uid\" not found\n")
