@@ -19,7 +19,7 @@ type service struct {
 	Streaming interface{} // could be []string or map[string]inteface{}
 	Nb        int
 	Error     string
-	Filesize  string
+	Filesize  interface{}
 }
 
 func getDownloadLink(link string) (string, string, bool, error) {
