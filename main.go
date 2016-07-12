@@ -73,6 +73,11 @@ func main() {
 			}
 			break
 
+		case "-rt", "--remaining-time":
+			if args == 2 {
+				fct = func() error { return alldebrid.RemainingTime() }
+			}
+
 		default:
 			break
 		}
