@@ -119,7 +119,7 @@ func getCookie() error {
 
 	if res, eff, err := sendRequest("/register/", fields, nil); err != nil {
 		return err
-	} else if eff != host+"/" {
+	} else if eff != host+"/" && eff != host {
 		os.Remove(cookie)
 
 		if form, err := goch.GetFormValues(res, "//form[@name=\"connectform\"]"); err != nil {
