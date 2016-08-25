@@ -49,6 +49,10 @@ How to use
 ```
         --download-all, -da
 ```
+* Display remaining time before account expiration
+```
+		--remaining-time, -rt
+```
 
 Credits
 =======
