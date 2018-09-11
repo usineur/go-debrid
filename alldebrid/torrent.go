@@ -72,11 +72,11 @@ func Torrent(params ...string) error {
 			}
 
 		case "remove":
-			if id := fields["id"]; eff != host+path {
-				return fmt.Errorf("ID %v not found in torrent queue", id)
-			} else {
+			if id := fields["id"]; label == nil && values == nil {
 				fmt.Printf("ID %v correctly removed from torrent queue\n", id)
 				return nil
+			} else {
+				return fmt.Errorf("ID %v not found in torrent queue", id)
 			}
 
 		case "remove_all":
