@@ -54,11 +54,11 @@ func Torrent(params ...string) error {
 
 		case "download_all":
 			for i, _ := range values {
-				for _, link := range strings.Split(values[i][10], ",;,") {
+				for _, link := range strings.Split(values[i][10], ";") {
 					if link == "Pending" {
 						fmt.Printf("ID %v is not yet downloadable\n", values[i][1])
 					} else if link != "" {
-						if err := DebridLink(link, ""); err != nil {
+						if err := DebridLink(strings.Trim(link, "\""), ""); err != nil {
 							fmt.Println(err.Error())
 						}
 					}
