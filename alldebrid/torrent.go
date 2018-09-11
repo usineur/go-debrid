@@ -110,7 +110,7 @@ func AddTorrent(filename string, magnet string, split bool, quick bool) error {
 		form.Add("domain", host+path)
 		form.Add("magnet", magnet)
 		if filename != "" {
-			form.AddFile("uploadedfile", filename)
+			form.AddFile("files[]", filename)
 		}
 		form.Add("splitfile", btos(split))
 		form.Add("quick", btos(quick))
