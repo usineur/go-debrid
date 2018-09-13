@@ -24,9 +24,9 @@ go get github.com/usineur/go-debrid
 
 How to use
 ----------
-* Debrid a link supported by Alldebrid
+* Debrid a link supported by Alldebrid, output filename can be rename
 ```
-        --debrid, -d    <link>
+        --debrid, -d    <link>  [--output, -o] <filename>
 ```
 * Add a torrent/magnet, can be used with extra parameters "```--split```" to split files into parts of 1 Gb, and/or "```--disable-quick```" to disable quick search of existing torrents in system
 ```
@@ -51,7 +51,7 @@ How to use
 ```
 * Display remaining time before account expiration
 ```
-		--remaining-time, -rt
+       --remaining-time, -rt
 ```
 
 Credits
