@@ -126,6 +126,8 @@ func getCookie() error {
 			return err
 		} else if captcha, exist := form["recaptcha_response_field"]; exist && captcha == "manual_challenge" {
 			return fmt.Errorf("AllDebrid is asking for a captcha: login to the website first and retry")
+		} else if _, exist := form["unlock_token"]; exist {
+			return fmt.Errorf("A login verification code is required: login to the website first and retry")
 		} else {
 			return fmt.Errorf("Invalid login/password?")
 		}
