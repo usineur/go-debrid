@@ -2,7 +2,7 @@ package alldebrid
 
 import (
 	"fmt"
-	"github.com/usineur/goch"
+	"github.com/usineur/go-debrid/utils"
 	"regexp"
 )
 
@@ -15,7 +15,7 @@ func RemainingTime() error {
 		} else {
 			return RemainingTime()
 		}
-	} else if msg, err := goch.GetContent(res, "//*[@id=\"account_top_right\"]/div[4]"); err != nil {
+	} else if msg, err := utils.GetContent(res, "//*[@id=\"account_top_right\"]/div[4]"); err != nil {
 		return err
 	} else {
 		re := regexp.MustCompile("[ ]+")

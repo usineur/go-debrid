@@ -1,4 +1,4 @@
-package alldebrid
+package utils
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func getCredentials() (string, string) {
+func GetCredentials() (string, string) {
 	print("Login: ")
 	bio := bufio.NewReader(os.Stdin)
 	id, _, _ := bio.ReadLine()
@@ -21,7 +21,7 @@ func getCredentials() (string, string) {
 	return string(id), string(pass)
 }
 
-func getFileContent(fullname string) (string, error) {
+func GetFileContent(fullname string) (string, error) {
 	if contents, err := ioutil.ReadFile(fullname); err != nil {
 		return "", err
 	} else {
@@ -29,9 +29,9 @@ func getFileContent(fullname string) (string, error) {
 	}
 }
 
-func getFullName(filename string) string {
+func GetFullName(filename string) string {
 	home := "HOME"
-	if isWindows() {
+	if IsWindows() {
 		home = "USERPROFILE"
 	}
 	fp := string(filepath.Separator)
@@ -44,7 +44,7 @@ func getFullName(filename string) string {
 	return path + fp + filename
 }
 
-func getChoice(length int) (int, error) {
+func GetChoice(length int) (int, error) {
 	print("? ")
 	bio := bufio.NewReader(os.Stdin)
 	num, _, _ := bio.ReadLine()
@@ -58,10 +58,10 @@ func getChoice(length int) (int, error) {
 	}
 }
 
-func btos(value bool) string {
+func Btos(value bool) string {
 	return strconv.FormatBool(value)
 }
 
-func isWindows() bool {
+func IsWindows() bool {
 	return runtime.GOOS == "windows"
 }

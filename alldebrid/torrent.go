@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/andelf/go-curl"
 	"github.com/anisus/eol"
-	"github.com/usineur/goch"
+	"github.com/usineur/go-debrid/utils"
 	"regexp"
 	"strings"
 )
 
 func getUid() (string, error) {
-	if contents, err := getFileContent(cookie); err != nil {
+	if contents, err := utils.GetFileContent(cookie); err != nil {
 		if err := getCookie(); err != nil {
 			return "", err
 		} else {
@@ -44,12 +44,12 @@ func Torrent(params ...string) error {
 		} else {
 			return Torrent(params...)
 		}
-	} else if label, values, err := goch.GetTableDataAsArrayWithHeaders(res, "//table[@id=\"torrent\"]", 0, 1); err != nil {
+	} else if label, values, err := utils.GetTableDataAsArrayWithHeaders(res, "//table[@id=\"torrent\"]", 0, 1); err != nil {
 		return err
 	} else {
 		switch params[0] {
 		case "list":
-			goch.DisplayHeaderTable(label, values, err)
+			utils.DisplayHeaderTable(label, values, err)
 			return nil
 
 		case "download_all":
@@ -112,8 +112,8 @@ func AddTorrent(filename string, magnet string, split bool, quick bool) error {
 		if filename != "" {
 			form.AddFile("files[]", filename)
 		}
-		form.Add("splitfile", btos(split))
-		form.Add("quick", btos(quick))
+		form.Add("splitfile", utils.Btos(split))
+		form.Add("quick", utils.Btos(quick))
 		form.Add("submit", "Convert this torrent")
 
 		if res, eff, err := sendRequest("/uploadtorrent.php", nil, form); err != nil {
@@ -130,7 +130,7 @@ func AddTorrent(filename string, magnet string, split bool, quick bool) error {
 				return fmt.Errorf("Alldebrid internal problem: retry")
 
 			default:
-				if msg, err := goch.GetContent(res, "//div[@style=\"color:red;text-align:center;\"]"); err != nil {
+				if msg, err := utils.GetContent(res, "//div[@style=\"color:red;text-align:center;\"]"); err != nil {
 					return err
 				} else {
 					return fmt.Errorf(msg)

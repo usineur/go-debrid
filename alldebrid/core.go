@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/andelf/go-curl"
-	"github.com/usineur/goch"
+	"github.com/usineur/go-debrid/utils"
 	"io"
 	"os"
 	"regexp"
@@ -14,7 +14,7 @@ import (
 
 const host = "https://alldebrid.com"
 
-var cookie string = getFullName("cookie.txt")
+var cookie string = utils.GetFullName("cookie.txt")
 
 type headless struct {
 	io.Writer
@@ -26,7 +26,7 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 	easy := curl.EasyInit()
 	defer easy.Cleanup()
 
-	if url, err := goch.EncodeUrl(host, path, data); err != nil {
+	if url, err := utils.EncodeUrl(host, path, data); err != nil {
 		return "", "", err
 	} else {
 		doc := ""
@@ -47,7 +47,7 @@ func sendRequest(path string, data map[string]string, form interface{}) (string,
 			doc += string(content)
 			return true
 		})
-		if isWindows() {
+		if utils.IsWindows() {
 			easy.Setopt(curl.OPT_SSL_VERIFYPEER, false)
 		}
 
@@ -94,7 +94,7 @@ func (h *headless) Write(p []byte) (int, error) {
 func netcat(dst io.Writer, url string) error {
 	config := &tls.Config{}
 
-	if host, path, err := goch.DecodeUrl(url); err != nil {
+	if host, path, err := utils.DecodeUrl(url); err != nil {
 		return err
 	} else if conn, err := tls.Dial("tcp", host+":443", config); err != nil {
 		return err
@@ -110,7 +110,7 @@ func netcat(dst io.Writer, url string) error {
 }
 
 func getCookie() error {
-	id, pass := getCredentials()
+	id, pass := utils.GetCredentials()
 	fields := map[string]string{
 		"action":         "login",
 		"login_login":    id,
@@ -122,7 +122,7 @@ func getCookie() error {
 	} else if eff != host+"/" && eff != host {
 		os.Remove(cookie)
 
-		if form, err := goch.GetFormValues(res, "//form[@name=\"connectform\"]"); err != nil {
+		if form, err := utils.GetFormValues(res, "//form[@name=\"connectform\"]"); err != nil {
 			return err
 		} else if captcha, exist := form["recaptcha_response_field"]; exist && captcha == "manual_challenge" {
 			return fmt.Errorf("AllDebrid is asking for a captcha: login to the website first and retry")

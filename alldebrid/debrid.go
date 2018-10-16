@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/andelf/go-curl"
+	"github.com/usineur/go-debrid/utils"
 	"html"
 	"os"
 	"sort"
@@ -68,7 +69,7 @@ func getStreamLink(streaming interface{}) (string, string) {
 	}
 
 	for err != nil {
-		if choice, err = getChoice(len(description)); err != nil || choice == -1 {
+		if choice, err = utils.GetChoice(len(description)); err != nil || choice == -1 {
 			choice = -1
 			err = fmt.Errorf("Invalid choice")
 			fmt.Println(err)
